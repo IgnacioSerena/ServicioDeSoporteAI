@@ -1,0 +1,34 @@
+# =========================
+# SECRETOS Y CONFIGURACIÓN
+# =========================
+# Ignorar SIEMPRE los archivos con contraseñas
+.env
+.env.*
+# PERO permitir que se suba el archivo de ejemplo vacío
+!.env.example
+
+# =========================
+# ENTORNOS VIRTUALES
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# CACHÉ DE PYTHON
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# =========================
+# LOGS Y BASES DE DATOS LOCALES
+# =========================
+*.log
+*.sqlite3
+
+# =========================
+# ARCHIVOS DEL EDITOR (VS Code)
+# =========================
+.vscode/

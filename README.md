@@ -50,6 +50,6 @@ GEMINI_API_KEY="tu_clave_gemini"
 
 ### 5. Iniciar el servidor
 \`\`\`bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 \`\`\`
 La API estará disponible en `http://localhost:8000` y la documentación interactiva (Swagger) en `http://localhost:8000/docs`.
