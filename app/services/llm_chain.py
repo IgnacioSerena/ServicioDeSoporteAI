@@ -9,21 +9,21 @@ from app.core.config import GOOGLE_API_KEY, GROQ_API_KEY
 from app.services.vector_store import get_retriever
 
 # 1. Configurar el LLM Principal (Google Gemini)
-# Usamos gemini-1.5-flash por su excelente balance entre velocidad y ventana de contexto
 primary_llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash-latest",
-    temperature=0.2, # Temperatura baja para respuestas de soporte precisas y no creativas
-    google_api_key=GOOGLE_API_KEY,
+    model="gemini-3.5-flash",
+    temperature=0.2,
+    api_key=SecretStr(GOOGLE_API_KEY),
     max_retries=2
 )
 
 # 2. Configurar el LLM de Respaldo (Groq con Llama 3)
-# Entrará en acción automáticamente si Gemini da un error 500, timeout, o rate limit
+
 backup_llm = ChatGroq(
     model="llama3-8b-8192", 
     temperature=0.2,
     api_key=SecretStr(GROQ_API_KEY),
-    max_retries=2
+    max_retries=0,
+    stop_sequences=["\n\n"]
 )
 
 # 3. Unir ambos modelos con la lógica de fallback
@@ -69,3 +69,4 @@ def get_rag_chain():
 
 # Instancia global para importar desde otros módulos
 rag_chain = get_rag_chain()
+

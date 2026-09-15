@@ -17,4 +17,9 @@ if not _groq_api_key:
 
 GROQ_API_KEY: str = _groq_api_key
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+_google_api_key = os.getenv("GOOGLE_API_KEY")
+
+if not _google_api_key:
+    raise ValueError("Falta la variable de entorno GOOGLE_API_KEY en el archivo .env")
+
+GOOGLE_API_KEY: str = _google_api_key
