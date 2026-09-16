@@ -32,3 +32,8 @@ __pycache__/
 # ARCHIVOS DEL EDITOR (VS Code)
 # =========================
 .vscode/
+
+# =========================
+# ARCHIVOS DE PRUEBAS
+# =========================
+app/scripts
