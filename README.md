@@ -15,11 +15,11 @@ Este proyecto implementa un pipeline **RAG (Retrieval-Augmented Generation)** en
 ## ✨ Características Principales (Ingeniería & MLOps)
 
 1. **Tolerancia a Fallos (Zero-Downtime Fallbacks):** Si el LLM principal agota su cuota (error `429 Too Many Requests`) o experimenta caídas, el sistema enruta la consulta automáticamente al modelo de respaldo en milisegundos sin interrumpir la experiencia del usuario.
-2. **Memoria Conversacional Persistente:** Soporte nativo para hilos de conversación multitenant mediante `session_id`. Permite identificar usuarios o pestañas y recordar el contexto de preguntas anteriores.
+2. **Memoria Conversacional Persistente:** Soporte nativo para hilos de conversación multitenant mediante `session_id`. Permite identificar usuarios o pestañas y recordar el contexto de preguntas anteriores manteniéndolo en memoria.
 3. **Gestión Inteligente de Contexto:** Implementación de un sistema de truncado (`trim_messages`) con conteo de tokens local. Evita desbordamientos de ventana de contexto eliminando de forma segura los mensajes más antiguos de la sesión.
-4. **Ingestión Estructurada y Masiva (Bulk):** Pipeline de vectorización que separa el contenido de sus metadatos (`JSONB`) y permite el borrado/sobreescritura segura de la base de datos entera de forma atómica para evitar desincronizaciones con el frontend.
+4. **Ingestión Estructurada y Masiva (Bulk):** Pipeline de vectorización que separa el contenido de sus metadatos (`JSONB`) y permite el borrado/sobreescritura segura de la base de datos vectorial entera de forma atómica para evitar desincronizaciones con el frontend.
 5. **Defensa contra Abusos:** Implementación de `SlowAPI` para limitar el número de peticiones por IP, protegiendo los endpoints de ataques y controlando los costes de infraestructura.
-6. **Caché Semántica en PostgreSQL:** Las respuestas generadas se almacenan en la base de datos relacional, reduciendo la latencia y el coste computacional en preguntas frecuentes.
+6. **Almacenamiento Vectorial Eficiente:** Uso del modelo ligero `sentence-transformers/all-MiniLM-L6-v2` de HuggingFace en CPU para la generación local de embeddings, almacenados y consultados de forma óptima en PostgreSQL mediante la estrategia MMR (Maximum Marginal Relevance).
 
 ## 🚀 Instalación y Despliegue Local
 
@@ -27,7 +27,6 @@ Este proyecto implementa un pipeline **RAG (Retrieval-Augmented Generation)** en
 ```bash
 git clone [https://github.com/IgnacioSerena/ServicioDeSoporteAI.git](https://github.com/IgnacioSerena/ServicioDeSoporteAI.git)
 cd ServicioDeSoporteAI
-```
 
 ### 2. Crear y activar el entorno virtual
 ```bash
@@ -162,11 +161,11 @@ def sincronizar_conocimiento():
     
     if respuesta.status_code == 200:
         datos = respuesta.json()
-        print(f"✅ Éxito: {datos['message']}")
+        print(f"Éxito: {datos['message']}")
         print(f"   - Documentos procesados: {datos['total_documents']}")
         print(f"   - Vectores (chunks) guardados: {datos['total_chunks_saved']}")
     else:
-        print(f"❌ Error al sincronizar: {respuesta.text}")
+        print(f"Error al sincronizar: {respuesta.text}")
 
 if __name__ == "__main__":
     sincronizar_conocimiento()

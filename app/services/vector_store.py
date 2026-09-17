@@ -1,9 +1,13 @@
+import logging
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.runnables import ConfigurableField
 from langchain_postgres import PGVector
+
 from app.core.config import SUPABASE_DB_URL
 
-# 1. Inicializamos el modelo de embeddings
+logger = logging.getLogger(__name__)
+
+# Configuración del modelo de embeddings ligero para ejecución eficiente en CPU
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2",
     model_kwargs={'device': 'cpu'} 
@@ -11,8 +15,9 @@ embeddings = HuggingFaceEmbeddings(
 
 COLLECTION_NAME = "vector_store"
 
-# 2. Instanciamos PGVector UNA SOLA VEZ a nivel de módulo.
-# Esto mantiene el engine de base de datos vivo y reutiliza las conexiones.
+# Instancia global de PGVector.
+# Al mantenerla a nivel de módulo, se reutilizan las conexiones a la base 
+# de datos (connection pooling implícito), mejorando el rendimiento general.
 _vector_store_instance = PGVector(
     embeddings=embeddings,
     collection_name=COLLECTION_NAME,
@@ -26,13 +31,18 @@ def get_vector_store() -> PGVector:
     """
     return _vector_store_instance
 
-def get_retriever(k=4, fetch_k=20):
+def get_retriever(k: int = 4, fetch_k: int = 20):
+    """
+    Construye un recuperador (retriever) basado en Maximum Marginal Relevance (MMR)
+    para asegurar diversidad en los fragmentos de contexto recuperados.
+    
+    Permite la inyección dinámica de filtros de metadatos en tiempo de ejecución.
+    """
     base_retriever = get_vector_store().as_retriever(
         search_type="mmr",
         search_kwargs={"k": k, "fetch_k": fetch_k}
     )
     
-    # Hacemos que los parámetros de búsqueda sean configurables dinámicamente
     configurable_retriever = base_retriever.configurable_fields(
         search_kwargs=ConfigurableField(
             id="search_filters",
