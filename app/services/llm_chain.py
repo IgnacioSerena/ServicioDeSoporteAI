@@ -10,7 +10,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from app.core.config import GOOGLE_API_KEY
 from app.services.vector_store import get_retriever
 
-# 1. Configurar el LLM Principal (Google Gemini)
+# 1. Configurar el LLM Principal 
 primary_llm = ChatGoogleGenerativeAI(
     model="gemini-3.5-flash-lite",
     temperature=0.2,
@@ -18,7 +18,7 @@ primary_llm = ChatGoogleGenerativeAI(
     max_retries=0
 )
 
-# 2. Configurar el LLM de Respaldo (Groq)
+# 2. Configurar el LLM de Respaldo
 backup_llm = ChatGoogleGenerativeAI(
     model="gemini-3.1-flash-lite",
     temperature=0.2,
